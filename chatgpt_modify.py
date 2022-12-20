@@ -29,16 +29,24 @@ def chatgpt_clone(input, history):
     s.append(input)
     inp = ' '.join(s)
     output = openai_create(inp)
-    history.append(output)
-    return history
+    history.append((input, output))
+    return history, history
 
-# Streamlit App
+
+
+# Streamlit App Configurations
 st.set_page_config(
-    page_title="Streamlit Chat - Demo",
-    page_icon=":robot:"
+    page_title="Streamlit / OpenAI", # Title of the webpage
+    page_icon="🤖",
+    menu_items={
+        'Get Help': None,
+        'Report a bug': None,
+        'About': "Author: [Roi Jacob C. Olfindo](https://github.com/wyx-smrf)"
+    }    
 )
 
 st.header("ChatGPT Clone with Streamlit")
+st.markdown('---')
 
 history_input = []
 
@@ -49,21 +57,19 @@ if 'past' not in st.session_state:
     st.session_state['past'] = []
 
 
-
 def get_text():
     input_text = st.text_input("You: ", key="input")
     return input_text 
 
 
 user_input = get_text()
-
+# what is the equation for first law of thermodynamics?
 
 if user_input:
-    output = chatgpt_clone(user_input, history_input) 
-        #appended as output, so the generated session state will create nested dict
+    output = chatgpt_clone(user_input, history_input)
     history_input.append([user_input, output])
-    st.session_state.generated.append(output[0])
     st.session_state.past.append(user_input)
+    st.session_state.generated.append(output[0])
 
 
 
@@ -71,15 +77,6 @@ if user_input:
 
 if st.session_state['generated']:
 
-    for i in range(0, len(st.session_state['generated'])):
-        message(st.session_state['past'][i], is_user=True, key=str(i) + '_user')
+    for i in range(len(st.session_state['generated'])-1, -1, -1):
         message(st.session_state["generated"][i], key=str(i))
-
-
-
-"st.session_state object", st.session_state
-
-st.write(len(st.session_state['generated']))
-
-st.write("generated", st.session_state['generated'])
-st.write("past", st.session_state['past'])
+        message(st.session_state['past'][i], is_user=True, key=str(i) + '_user')
