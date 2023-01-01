@@ -5,7 +5,7 @@ import openai
 from config import open_api_key
 openai.api_key = open_api_key
 
-# openAI code
+# openAI code (gets na)
 def openai_create(prompt):
 
     response = openai.Completion.create(
@@ -21,7 +21,7 @@ def openai_create(prompt):
 
     return response.choices[0].text
 
-
+# gets na
 def chatgpt_clone(input, history):
     history = history or []
     s = list(sum(history, ()))
